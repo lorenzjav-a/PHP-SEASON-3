@@ -17,6 +17,9 @@ include("connections.php");
 if(isset($_POST["btnAdd"])){
 
     $name = $_POST["name"];
+    $tuition = $_POST["tuition"];
+    $misc = $_POST["misc"];
+    
 
     foreach($_POST["student_no"] as $index => $value){
         
@@ -24,9 +27,9 @@ if(isset($_POST["btnAdd"])){
 
         $new_name = $name[$index];
 
-        $new_tuition = $name[$index];
+        $new_tuition = $tuition[$index];
 
-        $new_misc = $name[$index];
+        $new_misc = $misc[$index];
 
 
 
@@ -43,7 +46,7 @@ if(isset($_POST["btnUpload"])){
     
     echo "<hr>";
 
-    echo "<table border='1' width='50%'>";
+    echo "<table border='1' width='40%'>";
 
     echo "<tr>
     
@@ -53,7 +56,7 @@ if(isset($_POST["btnUpload"])){
         <td width='70%'><b>Miscellaneous Fee</b></td>
         </tr>
 
-        <tr><td colspan='2'><hr></td></tr>
+        <tr><td colspan='4'><hr></td></tr>
     
         <form method='POST'>
     
@@ -93,33 +96,33 @@ if(isset($_POST["btnUpload"])){
 
             }
 
-            if(empty($data[0])) {
+            if(empty($data[1])) {
                 $nameErr = "Name is empty";
 
                 $btnStatus = "DISABLED";
             }else{
 
-                $name = $data[0];
+                $name = $data[1];
 
             }
 
-            if(empty($data[0])) {
+            if(empty($data[2])) {
                 $tuitionErr = "Tuition Fee is empty";
 
                 $btnStatus = "DISABLED";
             }else{
 
-                $tuition = $data[0];
+                $tuition = $data[2];
 
             }
 
-            if(empty($data[1])) {
+            if(empty($data[3])) {
                 $miscErr = "Miscellaneous Fee is empty";
 
                 $btnStatus = "DISABLED";
             }else{
 
-                $misc = $data[1];
+                $misc = $data[3];
 
             }
 
