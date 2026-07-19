@@ -33,7 +33,7 @@ if(isset($_POST["btnAdd"])){
 
 
 
-        mysqli_query($connections, "INSERT INTO enrollment(Student_No., Name, Tuition_Fee, Miscellaneous_Fee )
+        mysqli_query($connections, "INSERT INTO enrollment(student_No, name, tuition_fee, miscellaneous_fee )
         VALUES('$new_student_no','$new_name','$new_tuition', '$new_misc')");
 
         echo "<script>window.location.href='index.php?notify=<font color=green>Student has been uploaded!</font>';</script>";
