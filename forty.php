@@ -14,7 +14,7 @@ include("connections.php");
 
 <br>
 
-<a href="PHPExcel/Examples/blank.php">Get</a>
+<a href="PHPExcel/Examples/blanko.php">Get</a>
 
 <?php
 
@@ -40,7 +40,7 @@ if(isset($_POST["btnAdd"])){
         mysqli_query($connections, "INSERT INTO enrollment(student_No, name, tuition_fee, miscellaneous_fee )
         VALUES('$new_student_no','$new_name','$new_tuition', '$new_misc')");
 
-        echo "<script>window.location.href='index.php?notify=<font color=green>Student has been uploaded!</font>';</script>";
+        echo "<script>window.location.href='forty.php?notify=<font color=green>Student has been uploaded!</font>';</script>";
 
     }
 }

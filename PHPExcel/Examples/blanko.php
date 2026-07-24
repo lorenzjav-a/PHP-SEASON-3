@@ -24,13 +24,13 @@ if (!isset($connections) || !($connections instanceof mysqli)) {
     die('Database connection not available or invalid.');
 }
 
-$query = mysqli_query($connections, "SELECT * FROM student");
+$query = mysqli_query($connections, "SELECT * FROM enrollment");
 if ($query) {
     while($row = mysqli_fetch_assoc($query)){
         $student_No = $row['student_No'];
         $name = $row['name'];
         $tuition_fee = $row['tuition_fee'];
-        $misc_fee = $row['misc_fee'];
+        $miscellaneous_fee = $row['miscellaneous_fee'];
 
         foreach(['A','B','C','D'] as $cols){
 
@@ -41,7 +41,7 @@ if ($query) {
         $sheet->setCellValue('A'.$row_count, $student_No);
         $sheet->setCellValue('B'.$row_count, $name);
         $sheet->setCellValue('C'.$row_count, $tuition_fee);
-        $sheet->setCellValue('D'.$row_count, $misc_fee);
+        $sheet->setCellValue('D'.$row_count, $miscellaneous_fee);
 
         $row_count++;
     }
