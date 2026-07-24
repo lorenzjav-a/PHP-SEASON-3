@@ -1,181 +1,133 @@
 <?php
-
 include("connections.php");
 
+require 'vendor/autoload.php';
+
+use PhpOffice\PhpSpreadsheet\IOFactory;
 ?>
 
-<form method="POST" enctype="multipart/form-data" >
+<form method="POST" enctype="multipart/form-data">
 
-<input type="file" name="file" value="" >
+<input type="file" name="file" value="">
 <br>
 <input type="submit" name="btnUpload" value="Upload Product">
 
 </form>
 
+<br>
+
+<a href="PHPExcel/Examples/blank.php">Get</a>
+
 <?php
 
 if(isset($_POST["btnAdd"])){
-
-    $name = $_POST["name"];
-    $tuition = $_POST["tuition"];
-    $misc = $_POST["misc"];
     
+    $price = $_POST["price"];
 
-    foreach($_POST["student_no"] as $index => $value){
-        
-        $new_student_no = $value;
+    foreach($_POST["product_name"] as $index => $value){
 
-        $new_name = $name[$index];
+        $new_product_name = $value;
 
-        $new_tuition = $tuition[$index];
+        $new_price = $price[$index];
 
-        $new_misc = $misc[$index];
+        mysqli_query($connections, "INSERT INTO product(product,price)
+        VALUES('$new_product_name', '$new_price')");
 
-
-
-        mysqli_query($connections, "INSERT INTO enrollment(student_No, name, tuition_fee, miscellaneous_fee )
-        VALUES('$new_student_no','$new_name','$new_tuition', '$new_misc')");
-
-        echo "<script>window.location.href='index.php?notify=<font color=green>Student has been uploaded!</font>';</script>";
-
+        echo "<script>window.location.href='index.php?notify=<font color=green>Product has been uploaded!</font>';</script>";
     }
 }
 
-
 if(isset($_POST["btnUpload"])){
     
-    echo "<hr>";
+    echo '<hr>';
 
     echo "<table border='1' width='40%'>";
+        echo "<tr>
 
-    echo "<tr>
-    
-        <td width='70%'><b>Student No.</b></td>
-        <td width='70%'><b>Name</b></td>
-        <td width='70%'><b>Tuition Fee</b></td>
-        <td width='70%'><b>Miscellaneous Fee</b></td>
-        </tr>
+            <td width='70%'><b>Product Name</b></td>
+            <td><b>Price</b></td>
 
-        <tr><td colspan='4'><hr></td></tr>
-    
-        <form method='POST'>
-    
-    ";
+            </tr>
 
-    $btnStatus = "ENABLED";
+            <tr><td colspan='2'><hr></td></tr>
 
-    $filename = $_FILES["file"]["tmp_name"];
+            <form method='POST'>
+        ";
 
-    if($_FILES["file"]["size" ] > 0){
+        $btnStatus = "ENABLED";
 
-        $file = fopen($filename, "r");
+        $filename = $_FILES["file"]["tmp_name"];
 
-        $row = 1;
-
-        $student_no = $name = $tuition = $misc = "";
-
-        $student_noErr = $nameErr = $tuitionErr = $miscErr = "";
-
-        while (($data = fgetcsv($file, 10000,",")) !== FALSE) {
-
-
-            if($row == 1){
-                $row++;
-                continue;
-            }
-
-            if(empty($data[0])) {
-
-                $student_noErr = "Student number is empty";
-
-                $btnStatus = "DISABLED";
-                
-            }else{
-
-                $student_no = $data[0];
-
-            }
-
-            if(empty($data[1])) {
-                $nameErr = "Name is empty";
-
-                $btnStatus = "DISABLED";
-            }else{
-
-                $name = $data[1];
-
-            }
-
-            if(empty($data[2])) {
-                $tuitionErr = "Tuition Fee is empty";
-
-                $btnStatus = "DISABLED";
-            }else{
-
-                $tuition = $data[2];
-
-            }
-
-            if(empty($data[3])) {
-                $miscErr = "Miscellaneous Fee is empty";
-
-                $btnStatus = "DISABLED";
-            }else{
-
-                $misc = $data[3];
-
-            }
-
-            echo "<input type='hidden' name='student_no[]' value='$student_no'>";
-
-            echo "<input type='hidden' name='name[]' value='$name'>";
-
-            echo "<input type='hidden' name='tuition[]' value='$tuition'>";
-
-            echo "<input type='hidden' name='misc[]' value='$misc'>";
-
-
-             echo "<tr>
+        if($_FILES["file"]["size"] > 0){
             
-             <td>$student_no</td>
+            $spreadsheet = IOFactory::load($filename);
+            $worksheet = $spreadsheet->getActiveSheet();
 
-             <td>$name</td>
+            $row = 1;
+                
+            $product_name = $price = "";
+            $product_nameErr = $priceErr = "";
+        
+            foreach ($worksheet->getRowIterator() as $excelRow){
 
-             <td>$tuition</td>
+                if($row == 1){
+                    $row++;
+                    continue;
+                }
+                
+                $cellIterator = $excelRow->getCellIterator();
+                $cellIterator->setIterateOnlyExistingCells(false);
 
-             <td>$misc</td>
+                $data = [];
 
-            </tr>";
+                foreach($cellIterator as $cell){
+                    $data[] = $cell->getValue();
+                }
 
+                if(empty($data[0])){
+                    $product_nameErr = "Product name is empty.";
+
+                    $btnStatus = "DISABLED";
+
+                }else{
+                    $product_name = $data[0];
+                }
+
+                if(empty($data[1])){
+                    $priceErr = "Product price is empty.";
+
+                    $btnStatus = "DISABLED";
+                }else{
+                    $price = $data[1];
+                }
+                
+                echo "<input type='hidden' name='product_name[]' value='$product_name'>";
+                echo "<input type='hidden' name='price[]' value='$price'>";
+                    echo "<tr>
+                        <td>$product_name</td><br>
+                        <td>$price</td>
+
+                    
+                    </tr>";
+            }
         }
-
-    }
-
+    
     echo "<tr>
+    <td>
+    $product_nameErr
+    <br>
+    $priceErr
+    </td>;
 
     <td>
-    $student_noErr
-    <br>
-    $nameErr
-    <br>
-    $tuitionErr
-    <br>
-    $miscErr
-    </td>
-
-    <td> 
         <div align='right'>
-            <input type='submit' $btnStatus name='btnAdd' value='Add this Info'>
-        <div>
+            <input type='submit' $btnStatus name='btnAdd' value='Add this Product'>
+        </div>
+    
+    </td></tr>";
         
-    </td></tr>
-
-    </form>
-
-    ";
 
     echo "</table>";
-
 }
 
 ?>
